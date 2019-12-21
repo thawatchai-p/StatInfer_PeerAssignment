@@ -43,6 +43,7 @@ This exercise is asking you to use your knowledge of the theory given in class t
 Confused? Try re-watching video lecture 07 for a starter on how to complete this project.
 
 **Sample Project Report Structure**
+
 Of course, there are multiple ways one could structure a report to address the requirements above. However, the more clearly you pose and answer each question, the easier it will be for reviewers to clearly identify and evaluate your work.
 
 A sample set of headings that could be used to guide the creation of your report might be:
