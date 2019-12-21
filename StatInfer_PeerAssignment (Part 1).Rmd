@@ -1,11 +1,84 @@
 ---
-title: "Statistical Inference: Peer-graded Assigment (Part 1)"
+title: "Analysis of Central Limit Theorem on Exponential Distribution"
 author: "Thawatchai Phakwithoonchai"
 date: "12/21/2019"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts=list(blank=FALSE, width.cutoff=60,size = 'tiny'))
+library(ggplot2)
 ```
 
+# Overview / Synopsis
+
+This assignment is to investigate the random exponential distribution in R and compare it with the Central Limit Theorem. The result indicates that the **distribution of averages of random exponential variables become closed to normal.**
+
+# Simulation Process
+
+The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. The distribution of averages of 40 exponentials will be investigated with a thousand simulations.
+
+```{r Setting the parameters}
+set.seed(1234) #set.seed for reproducibility
+lambda <- 0.2
+n <- 40
+simno <- 10000
+```
+
+1. Compared the sample mean with the theoretical mean of the distribution.
+
+```{r Determine the sample mean}
+simmeans = NULL
+for (i in 1 : 1000) simmeans = c(simmeans, mean(rexp(n, lambda)))
+mean(simmeans)
+```
+
+```{r Determine the theoretical mean}
+theomean <- 1/lambda; theomean
+```
+
+The following graph shows the distribution of average of 40 exponentials. The solid red line indicates the theoretical mean, while the dashed blue one indicates the sample mean.
+
+```{r Plot the theoretical mean vs sample mean, echo=FALSE, fig.height=4}
+df <- data.frame(simmeans)
+par(mar = c(3,4,1,1))
+g1 <- ggplot(df, aes(x = simmeans))
+g1 + geom_histogram(color="black", fill="white") + labs(title = "Distribution of Average of 40 Exponentials", x="Average of 40 Exponentials", y="") + theme(plot.title = element_text(hjust = 0.5)) + geom_vline(aes(xintercept = mean(simmeans)), color="blue", linetype= "dashed", size=1) + geom_vline(aes(xintercept = 1/lambda), color="red", linetype= "solid", size=1)
+```
+
+2. Compared the sample variance with the theoretical variance of the distribution.
+
+```{r Determine the sample std.dev. and variance}
+c(sd(simmeans), var(simmeans))
+```
+
+```{r Determine the theoretical srd.dev. and variance}
+c(1/lambda/sqrt(n), 1/lambda^2/n)
+```
+
+The table highlighting basic features of the data is shown as following:
+
+```{r Summary table, echo=FALSE}
+sumtab <- matrix(c(1/lambda, mean(simmeans), 1/lambda/sqrt(n), sd(simmeans), 1/lambda^2/n, var(simmeans)), nrow = 3, ncol = 2, byrow = TRUE)
+colnames(sumtab) <- c("Theoretical", "Sample")
+rownames(sumtab) <- c("Mean", "Standard Deviation", "Variance")
+sumtab
+```
+
+3. Display that the distribution is approximately normal.
+
+By focusing on the difference between the distribution of a large collection of random exponentials (positive skew shape) and the distribution of a large collection of averages of 40 exponentials. (approximately normal shape), the analysis result is apparently indicated that by applying the Central Limit Theorem, the distribution of averages of random exponential variables will be approximately normal.
+
+```{r Plot the distribution of random exponentials, fig.height=3.5}
+rexpo <- rexp(simno, lambda)
+par(mar = c(4,4,1,1))
+hist(rexpo, main = "Histogram of Random Exponentials", xlab = "Random Exponentials Value", breaks = 30)
+```
+
+```{r Plot the distribution of avg of 40 random exponentials, fig.height=3.5}
+par(mar = c(4,4,1,1))
+hist(simmeans, main = "Histogram of Averages of 40 Random Exponentials", xlab = "Averages of 40 Random Exponentials", breaks = 20)
+```
