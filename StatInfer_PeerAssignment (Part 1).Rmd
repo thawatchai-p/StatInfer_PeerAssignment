@@ -4,13 +4,13 @@ author: "Thawatchai Phakwithoonchai"
 date: "12/21/2019"
 output:
   pdf_document: default
-  html_document:
-    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts=list(blank=FALSE, width.cutoff=60,size = 'tiny'))
+library(formatR)
 library(ggplot2)
+library(knitr)
+opts_chunk$set(echo = TRUE, tidy.opts=list(width.cutoff=60),tidy=TRUE)
 ```
 
 # Overview / Synopsis
