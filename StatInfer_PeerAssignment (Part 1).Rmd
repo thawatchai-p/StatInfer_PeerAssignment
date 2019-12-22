@@ -3,6 +3,8 @@ title: "Analysis of Central Limit Theorem on Exponential Distribution"
 author: "Thawatchai Phakwithoonchai"
 date: "12/21/2019"
 output:
+  html_document:
+    df_print: paged
   pdf_document: default
 ---
 
