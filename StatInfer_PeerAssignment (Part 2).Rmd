@@ -1,0 +1,122 @@
+---
+title: "Analysis of affected parameters on the tooth growth of guinea pigs"
+author: "Thawatchai Phakwithoonchai"
+date: "12/21/2019"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+library(datasets)
+library(formatR)
+library(ggplot2)
+library(knitr)
+opts_chunk$set(echo = TRUE, tidy.opts=list(width.cutoff=60), tidy=TRUE)
+```
+
+# Overview / Synopsis
+This assignment is to investigate the supplement type and/or dosage rate that affect to the tooth length in 60 guinea pigs. The analysis result indicates that 0.5 and 1.0 mg dosage rate has significantly positive effect to the tooth length for all supplement method.
+
+# Exploratory data analysis and Basic summary of data
+```{r Prepare the data, include=FALSE}
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+```
+
+Toothgrowth dataset represent the response of the length of odontoblasts (len: cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (dose: 0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (supp: a form of vitamin C and coded as VC). Dataset consists of 60 observations with 3 variables.
+```{r Explore the dataset, echo=FALSE}
+str(ToothGrowth)
+```
+
+The data correlation can be determined by plotting in order to visualized the effects of both supplement type and dosage rate. The plotting result is showed as following:
+
+```{r Explore the data correlation, echo=FALSE, tidy=TRUE, fig.height=2.5}
+qplot(dose,len,data=ToothGrowth, facets=~supp, main="Tooth growth of guinea pigs affected by supplement type and dosage rate", xlab="Dosage", ylab="Tooth length") + geom_boxplot(aes(fill=dose)) + theme(plot.title = element_text(hjust = 0.5))
+```
+
+The plotting results apparently indicate the positive effect of the dosage rate on supplement type i.e. the tooth growth is increased along with the dosage rate. 
+
+# Establish the key assumption
+
+1. All sample observations is independent and identically distributed (i.i.d.).
+2. Normal distribution can be verified by histogram plot based on supplement type. The plotting results indicate the Toothgrowth dataset is most likely follows a normal distribution.
+
+```{r Verify the normal distribution, echo=FALSE, tidy = TRUE, fig.height = 2.5}
+norm.plot <- ggplot(data = ToothGrowth, aes(x=len))
+norm.plot + geom_density(color="darkblue", fill="lightblue") + facet_grid(. ~supp) + geom_vline(aes(xintercept=mean(len)), color="blue", linetype="dashed", size=1) + labs(title = "Density plot of tooth length", x = "Tooth length") + theme(plot.title = element_text(hjust = 0.5))
+```
+3. Confidence intervals (C.I.) will be specified as 95%. 
+4. Variances of tooth growth are different in terms of both supplement type and dosage rate.
+
+# Conduct the hypothesis test
+
+Hypotheis that need to be verified for this dataset is:
+
+* H~0~ : There is no difference between the supplement type (OJ vs VC)
+* H~a~ : There is a difference between the two methods
+```{r Verify the difference of Total OJ and VC, echo=FALSE}
+t.test(len ~ supp, data = ToothGrowth, paired = FALSE, var.equal = FALSE)
+```
+
+The above result indicates the P-Value is 0.061, which > 0.05. Therefore, it is failed to reject the null hypothesis or there is not enough evidence to suggest that the supplement type impacts to the tooth growth. However, further analysis is required to revify whether if there is a difference between OJ and VC at different dosage rate e.g. 0.5, 1.0, and 2.0 mg.
+\newpage
+ 
+ * At **0.5 mg dosage rate**, there is a significant difference (p-Value < 0.05) between VC and OJ supplement methods at the 0.5 mg dosage rate as following:
+```{r Verify the difference of OJ and VC at 0.5 mg, echo=FALSE}
+dose05 <- subset(ToothGrowth, dose == 0.5)
+t.test(len ~ supp, data = dose05, paired = FALSE, var.equal = FALSE)
+```
+
+ * At **1.0 mg dosage rate**, there is a significant difference (p-Value < 0.05) between VC and OJ supplement methods at the 1.0 mg dosage rate as following:
+```{r Verify the difference of OJ and VC at 1.0 mg, echo=FALSE}
+dose10 <- subset(ToothGrowth, dose == 1.0)
+t.test(len ~ supp, data = dose10, paired = FALSE, var.equal = FALSE)
+```
+
+ * At **2.0 mg dosage rate**, there is *"NO"* significant difference (p-Value > 0.05)between VC and OJ supplement methods at the 2.0 mg dosage rate as following:
+```{r Verify the difference of OJ and VC at 2.0 mg, echo=FALSE}
+dose20 <- subset(ToothGrowth, dose == 2.0)
+t.test(len ~ supp, data = dose20, paired = FALSE, var.equal = FALSE)
+```
+
+# Conclusion
+
+Dosage rate has most likely positive effect to the tooth length for all supplement method. At 0.5 mg and 1.0 mg dosage rate, OJ supplement type has significantly positive effect to the tooth growth than the VC but has no significantly positive effect at 2.0 mg dosage rate.
+
+\newpage
+
+# Supporting Appendix
+
+```{r Appendix, eval = FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# Loading the dataset and library
+library(datasets)
+library(formatR)
+library(ggplot2)
+library(knitr)
+
+# Prepare the data
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+
+# Explore the dataset
+str(ToothGrowth)
+
+# Explore the data correlation
+qplot(dose,len,data=ToothGrowth, facets=~supp, main="Tooth growth of guinea pigs 
+      affected by supplement type and dosage rate", xlab="Dosage", ylab="Tooth length") + geom_boxplot(aes(fill=dose)) + theme(plot.title = element_text(hjust = 0.5))
+
+# Verify the normal distribution
+norm.plot <- ggplot(data = ToothGrowth, aes(x=len))
+norm.plot + geom_density(color="darkblue", fill="lightblue") + facet_grid(. ~supp) + geom_vline(aes(xintercept=mean(len)), color="blue", linetype="dashed", size=1) + labs(title = "Density plot of tooth length", x = "Tooth length") + theme(plot.title = element_text(hjust = 0.5))
+
+# Verify the difference of Total OJ and VC
+t.test(len ~ supp, data = ToothGrowth, paired = FALSE, var.equal = FALSE)
+
+# Verify the difference of OJ and VC at 0.5 mg
+dose05 <- subset(ToothGrowth, dose == 0.5)
+t.test(len ~ supp, data = dose05, paired = FALSE, var.equal = FALSE)
+
+# Verify the difference of OJ and VC at 1.0 mg
+dose10 <- subset(ToothGrowth, dose == 1.0)
+t.test(len ~ supp, data = dose10, paired = FALSE, var.equal = FALSE)
+
+# Verify the difference of OJ and VC at 2.0 mg
+dose20 <- subset(ToothGrowth, dose == 2.0)
+t.test(len ~ supp, data = dose20, paired = FALSE, var.equal = FALSE)
+```
